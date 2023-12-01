@@ -44,8 +44,11 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
+        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rath2Deg + _camera.eulreAngles.y;
+
+        transform.rotation =Quaternion.Euler(0. targetAngle,0);
         Vector3 direction = new Vector3 (_horizontal, 0, _vertical);
-        _controller.direction (direction * Time.deltaTime * _playerSpeed);
+        _controller.Move (moveDirection.normalized * Time.deltaTime * _playerSpeed);
 
         if (direction != Vector3.zero)
         {
@@ -62,11 +65,11 @@ public class Player : MonoBehaviour
 
         if(Input.GetButtonDown("Jump") && ! _isGrounded)
         {
-            _playerSpeed.y += Mathf.Sqrt(_jumpHeight * -2 * _gravity);
+            _playerGravity.y += Mathf.Sqrt(_jumpHeight * -2 * _gravity);
         }
 
-        _playerSpeed.y += _gravity * Time.deltaTime;
-        _controller.direction(_playerSpeed * Time.deltaTime);
+        _playerGravity.y += _gravity * Time.deltaTime;
+        _controller.Move(_playerSpeed * Time.deltaTime);
         
         _animator.SetBool("IsJumping", true);
     }
