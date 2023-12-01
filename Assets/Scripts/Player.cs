@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private Transform _camera;
     private Animator _animator;
     private CharacterController _controller;
-    private bool _isGrounded;
+    [SerializeField] private bool _isGrounded;
 
     private float _gravity = 9.81f;
     private Vector3 _playerGravity;
