@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform _sensorPosition;
     [SerializeField] private float _sensorRadius = 0.2f;
     [SerializeField] private float turnSmoothVelocity;
-    [SerializeField] private LayerMask GroundSensor;
+    [SerializeField] private LayerMask groundSensor;
 
     // Start is called before the first frame update
     void Awake()
@@ -44,10 +44,11 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
-        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rath2Deg + _camera.eulreAngles.y;
-
-        transform.rotation =Quaternion.Euler(0. targetAngle,0);
         Vector3 direction = new Vector3 (_horizontal, 0, _vertical);
+        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + _camera.eulerAngles.y;
+
+        transform.rotation =Quaternion.Euler(0, targetAngle,0);
+        Vector3 moveDirection =Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
         _controller.Move (moveDirection.normalized * Time.deltaTime * _playerSpeed);
 
         if (direction != Vector3.zero)
@@ -61,15 +62,16 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        //_isGrounded (Physics);
+        _isGrounded = Physics.CheckSphere(_sensorPosition.position, _sensorRadius, groundSensor);    
+        
 
-        if(Input.GetButtonDown("Jump") && ! _isGrounded)
+        if(Input.GetButtonDown("Jump") && _isGrounded)
         {
             _playerGravity.y += Mathf.Sqrt(_jumpHeight * -2 * _gravity);
         }
-
+        
         _playerGravity.y += _gravity * Time.deltaTime;
-        _controller.Move(_playerSpeed * Time.deltaTime);
+        _controller.Move(_playerGravity * Time.deltaTime);
         
         _animator.SetBool("IsJumping", true);
     }
